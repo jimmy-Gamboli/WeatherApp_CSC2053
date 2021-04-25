@@ -7,19 +7,20 @@ import android.view.View;
 import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
-    private EditText locationInput;
+    private EditText mLocationInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fetchWeatherForecast weather = new fetchWeatherForecast();
-        weather.execute("Boston");
+        mLocationInput = (EditText) findViewById(R.id.cityInput);
     }
 
 
     public void searchWeather(View view) {
-
+        String query = mLocationInput.getText().toString();
+        fetchWeatherForecast weather = new fetchWeatherForecast();
+        weather.execute(query);
     }
 }
