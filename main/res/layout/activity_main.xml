@@ -16,12 +16,12 @@
         android:layout_marginBottom="8dp"
         android:text="Enter City"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        app:layout_constraintBottom_toTopOf="@+id/bookInput"
+        app:layout_constraintBottom_toTopOf="@+id/cityInput"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/bookInput"
+        android:id="@+id/cityInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -39,7 +39,7 @@
         android:onClick="searchWeather"
         android:text="Search"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bookInput"/>
+        app:layout_constraintTop_toBottomOf="@+id/cityInput"/>
 
     <TextView
         android:id="@+id/titleText"
@@ -52,7 +52,7 @@
         app:layout_constraintTop_toBottomOf="@+id/searchButton" />
 
     <TextView
-        android:id="@+id/authorText"
+        android:id="@+id/weatherText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
