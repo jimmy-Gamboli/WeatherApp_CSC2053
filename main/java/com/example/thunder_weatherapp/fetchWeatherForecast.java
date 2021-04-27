@@ -7,6 +7,7 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,14 +23,16 @@ public class fetchWeatherForecast  extends AsyncTask<String, Void, String> {
     private WeakReference<TextView> mWindText;
     private WeakReference<TextView> mLocationText;
     private WeakReference<TextView> mTemperatureText;
+    private String location;
 
 
-    fetchWeatherForecast(){
+    fetchWeatherForecast(TextView locationText, TextView tempText, TextView weatherText, TextView windText){
         //Initialize variables for each of the textviews
-       /* mLocationText = new WeakReference<>(locationText);
-        mWeatherText = new WeakReference<>(tempText);
-        mTemperatureText = new WeakReference<>(weatherText);
-        mWindText = new WeakReference<>(windText);*/
+       this.mLocationText = new WeakReference<>(locationText);
+       this.mWeatherText = new WeakReference<>(tempText);
+       this.mTemperatureText = new WeakReference<>(weatherText);
+       this.mWindText = new WeakReference<>(windText);
+        location = null;
     }
 
     @Override
@@ -47,19 +50,21 @@ public class fetchWeatherForecast  extends AsyncTask<String, Void, String> {
     private String getWeather(String location) throws IOException {
 
         String forecast = null;
-        String id =getWOEID(location);
-       // String url = "https://goweather.herokuapp.com/weather/"+"Curita";
+        String id = getWOEID(location);
+        // String url = "https://goweather.herokuapp.com/weather/"+"Curita";
         String url ="https://www.metaweather.com/api/location/"+id;
-        Log.d("GETweatherTag",url);
 
+        // Make Connection to API
         URL requestURL = new URL(url);
         HttpURLConnection connection = (HttpURLConnection) requestURL.openConnection();
         connection.setRequestMethod("GET");
         connection.connect();
 
+        // Receive Response
         InputStream input = connection.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
+        // Creates a string with the response
         StringBuilder builder = new StringBuilder();
         String line;
         while((line = reader.readLine())!=null){
@@ -69,8 +74,6 @@ public class fetchWeatherForecast  extends AsyncTask<String, Void, String> {
         forecast = builder.toString();
         Log.d("GETweatherTag",forecast);
 
-
-
         return forecast;
 
     }
@@ -78,9 +81,9 @@ public class fetchWeatherForecast  extends AsyncTask<String, Void, String> {
     protected String getWOEID(String s) throws IOException{
         String forecast = null;
         String id=null;
-
+        location =s;
         String url ="https://www.metaweather.com/api/location/search/?query="+s;
-        Log.d("GETweatherTag",url);
+
 
         URL requestURL = new URL(url);
         HttpURLConnection connection = (HttpURLConnection) requestURL.openConnection();
@@ -117,10 +120,53 @@ public class fetchWeatherForecast  extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+        String weatherDescription =null;
+        Double temperature =null;
+        String wind =null;
+        JSONObject jsonString =null;
+        JSONArray weatherArr = null;
 
-        
+        int i = 0;
+
+        try {
+            jsonString= new JSONObject(s);
+            weatherArr =  jsonString.getJSONArray("consolidated_weather");
+
+
+            JSONObject pair = weatherArr.getJSONObject(0);
+            weatherDescription = pair.getString("weather_state_name");
+            wind =pair.getString("wind_speed")+" "+pair.getString("wind_direction_compass");
+            temperature = (1.8*Double.parseDouble(pair.getString("the_temp")))+32;
+
+           /* while (i < weatherArr.length() &&
+                    (weatherDescription == null && temperature == null && wind == null)) {
+                JSONObject weather = weatherArr.getJSONObject(i);
+                //get volumeInfo key
+                JSONObject weatherInfo = weather.getJSONObject("volumeInfo");
+
+                weatherDescription = weatherInfo.getString(//);
+                temperature = weatherInfo.getString(//);
+                wind = weatherInfo.getString(//);
+
+                if (weatherDescription != null && temperature != null && wind != null) {
+                    mTemperatureText.get().setText(temperature);
+                    mWindText.get().setText(wind);
+                } else {
+                    mTemperatureText.get().setText("No results");
+                    mWeatherText.get().setText("");
+                    mWindText.get().setText("");
+                }
+                // Move to the next item.
+                i++;
+            }
+*/
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
-
 
 
 }
